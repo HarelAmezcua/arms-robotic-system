@@ -1,7 +1,3 @@
-Here's a professional and detailed `README.md` template for a robotic system that uses the **Graph of Convex Sets (GCS)** for collision avoidance:
-
----
-
 # Robotic Collision Avoidance using Graph of Convex Sets (GCS)
 
 This repository implements a robotic motion planning system using the **Graph of Convex Sets (GCS)** for **collision-free trajectory optimization**. It leverages recent advances in convex relaxation and optimization to generate smooth, safe, and dynamically feasible paths in cluttered environments.
