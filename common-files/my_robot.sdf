@@ -25,11 +25,11 @@
           </inertia>
         </inertial>
         <collision name="L1_collision">
-          <pose>0 0 0 0 0 0</pose>
+          <pose>0 0 -0.049 0 0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.025</radius>
-              <length>0.1</length>
+              <length>0.098</length>
             </cylinder>
           </geometry>
         </collision>
@@ -100,11 +100,11 @@
           </inertia>
         </inertial>
         <collision name="L2_collision">
-          <pose>0 0 0 0 0 0</pose>
+          <pose>-0.0525 0 0 0 1.5708 0</pose>
           <geometry>
             <cylinder>
               <radius>0.025</radius>
-              <length>0.1</length>
+              <length>0.105</length>
             </cylinder>
           </geometry>
         </collision>
@@ -173,11 +173,11 @@
           </inertia>
         </inertial>
         <collision name="L3_collision">
-          <pose>0 0 0 0 0 0</pose>
+          <pose>-0.0675 0 0 0 1.5708 0</pose>
           <geometry>
             <cylinder>
               <radius>0.025</radius>
-              <length>0.1</length>
+              <length>0.135</length>
             </cylinder>
           </geometry>
         </collision>
@@ -306,6 +306,20 @@
       <!-- END_EFFECTOR Tool Center Point-->
       <link name="tool_center_point">
         <pose>0 0 0.514 0 0 3.1416</pose>
+
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>0.1</mass>
+          <inertia>
+            <ixx>0.001</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.001</iyy>
+            <iyz>0</iyz>
+            <izz>0.001</izz>
+          </inertia>
+        </inertial>
+
         <visual name="x_axis">
           <pose>0.025 0 0 0 1.5708 0</pose>
           <geometry>
@@ -361,17 +375,26 @@
         </visual>
 
         <visual name="L5_visual_b">
-          <pose>0 0 -0.083 0 0 0</pose>
+          <pose>0 0 -0.068 0 0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.015</radius>
-              <length>0.04</length>
+              <length>0.05</length>
             </cylinder>
           </geometry>
           <material>
             <ambient>0.8 0.8 0.8 1</ambient> <!-- light gray -->
             <diffuse>0.8 0.8 0.8 1</diffuse>
           </material>
+        </visual>
+
+        <visual name="gripper">
+          <pose>0 0 -0.025 1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <uri>gripper.obj</uri>
+            </mesh>            
+          </geometry>
         </visual>
       </link>
 
