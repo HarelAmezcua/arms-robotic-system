@@ -23,7 +23,7 @@ def add_custom_robot(plant):
         The model instance of the added robot.
     """
     # Get the path to the robot SDF file
-    sdf_path = os.path.join(get_parent_directory(), 'common-files','models','KINOVA_GEN3_LITE_PRIMITIVES','model.sdf')
+    sdf_path = os.path.join(get_parent_directory(), 'common-files','my_robot.sdf')
 
     if not os.path.exists(sdf_path):
         raise FileNotFoundError(f"SDF file not found at {sdf_path}")
@@ -180,3 +180,31 @@ def add_objects(plant):
         objects.append(object_model)
     
     return objects
+
+  
+
+def add_cylinder_obstacle(plant):
+    """
+    Adds a shelf to the plant from an SDF file.
+
+    Args:
+        plant: The MultibodyPlant to which the shelf will be added.
+        shelf_path: The path to the SDF file of the shelf.
+
+    Returns:
+        The model instance of the added shelf.
+    """
+    # Get the path to the shelf SDF file    
+
+    cylinder_path = os.path.join(get_parent_directory(), 'common-files','cylinder_obstacle.sdf')
+
+    parser = Parser(plant)
+    cylinder_model = parser.AddModels(cylinder_path)
+
+    # Transform for final position
+    R = RotationMatrix.Identity()
+    t = [0.2, 0, 0.4]
+    X_WS = RigidTransform(R,t)
+
+    plant.WeldFrames(plant.world_frame(), plant.GetFrameByName("cylinder_body"), X_WS)
+    return cylinder_model

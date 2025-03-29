@@ -12,7 +12,7 @@ from pydrake.multibody.tree import Body
 from pydrake.multibody.inverse_kinematics import InverseKinematics
 
 
-from src.auxiliar.importing_objects import add_custom_robot, add_custom_wsg, add_table, add_shelf, add_bin, weld_gripper_to_robot
+from src.auxiliar.importing_objects import add_custom_robot, add_custom_wsg, add_table, add_shelf, add_bin, weld_gripper_to_robot, add_cylinder_obstacle
 
 
 def LoadRobot(plant: MultibodyPlant) -> Body:
@@ -20,14 +20,9 @@ def LoadRobot(plant: MultibodyPlant) -> Body:
     end-effector."""
     
     robot_model = add_custom_robot(plant)[0]
-    gripper_model = add_custom_wsg(plant)[0]
     table_model = add_table(plant)[0]
-    #shelf_model = add_shelf(plant)[0]
-    #bin_model = add_bin(plant)[0]    
-    weld_gripper_to_robot(plant, robot_model, gripper_model, ee_link_name="FINAL_JOINT_FRAME")
+    cylinder_model = add_cylinder_obstacle(plant)[0]
     
-    end_effector_body = plant.GetBodyByName("body_gripper", gripper_model)
-    return end_effector_body
 
 def get_default_position():
     plant = MultibodyPlant(0.0)

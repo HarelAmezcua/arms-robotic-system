@@ -78,7 +78,7 @@ def _CalcRegion(name, seed, config):
         for h in iris_options.configuration_obstacles:
             _CheckNonEmpty(h)
     else:
-        iris_options.configuration_obstacles = None
+        iris_options.configuration_obstacles = []
 
     display(f"Computing region for seed: {name}")
     start_time = time.time()

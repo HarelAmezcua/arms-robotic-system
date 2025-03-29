@@ -11,7 +11,7 @@ def create_iris_options():
     iris_options.termination_threshold = -1
     iris_options.configuration_space_margin = 1e-2
 
-    use_existing_regions_as_obstacles = True
+    use_existing_regions_as_obstacles = False # Before was False
     regions_as_obstacles_scale_factor = 0.95
     # We can compute some regions in parallel.
     num_parallel = mp.cpu_count()
