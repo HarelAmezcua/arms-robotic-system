@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<sdf version="1.7">
+  <model name="cylinder_obstacle">
+    <link name="cylinder_body">
+      <visual name="cylinder_visual">
+        <geometry>
+          <cylinder>
+            <radius>0.025</radius>       <!-- meters -->
+            <length>0.5</length>       <!-- meters -->
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.8 0.1 0.1 1</ambient>  <!-- reddish color -->
+          <diffuse>0.8 0.1 0.1 1</diffuse>
+        </material>
+      </visual>
+      <collision name="collision">
+        <geometry>
+          <cylinder>
+            <radius>0.025</radius>
+            <length>0.5</length>
+          </cylinder>
+        </geometry>
+      </collision>      
+    </link>
+  </model>
+</sdf>

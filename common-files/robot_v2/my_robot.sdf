@@ -1,0 +1,422 @@
+<?xml version="1.0"?>
+
+<sdf version="1.7">
+    <model name="MY_ROBOT">
+      <pose>0 0 0 0 0 0</pose>
+  
+      <!-- BASE -->
+      <link name="BASE">
+        <pose>0 0 0 0 0 0</pose>
+      </link>
+
+      <!-- SHOULDER -->
+      <link name="L1">
+        <pose >0 0 0.098 0 0 1.5708</pose>
+        <inertial>
+          <pose >0 0 0 0 0 0</pose>
+          <mass>0.1</mass>
+          <inertia>
+            <ixx>0.001</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.001</iyy>
+            <iyz>0</iyz>
+            <izz>0.001</izz>
+          </inertia>
+        </inertial>
+        <collision name="L1_collision">
+          <pose>0 0 -0.049 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.025</radius>
+              <length>0.098</length>
+            </cylinder>
+          </geometry>
+        </collision>
+
+        <visual name="L1_visual_a">
+          <pose>0 0 -0.088 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.035</radius>
+              <length>0.02</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.2 0.2 0.2 1</ambient> <!-- dark gray -->
+            <diffuse>0.2 0.2 0.2 1</diffuse>
+          </material>
+        </visual>
+
+        <visual name="L1_visual_b">
+          <pose>0 0 -0.049 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.015</radius>
+              <length>0.098</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient> <!-- light gray -->
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+          </material>
+        </visual>
+      </link>
+
+
+      <!-- JOINT J0-->
+      <joint name="J0" type="revolute">
+        <parent>BASE</parent>
+        <child>L1</child>
+        <pose>0 0 0 0 0 0</pose>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-2.76</lower>
+            <upper>2.76</upper>
+            <effort>10</effort>
+            <velocity>0.35</velocity>
+          </limit>
+          <dynamics>
+            <damping>0</damping>
+            <friction>0</friction>
+          </dynamics>
+        </axis>
+      </joint>
+
+      <!-- ARM -->
+      <link name="L2">
+        <pose>0 0 0.2030 0 -1.5708 1.5708</pose> <!-- -->
+        <inertial>
+          <pose>0.0 0 0 0 0 0</pose>
+          <mass>0.1</mass>
+          <inertia>
+            <ixx>0.001</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.001</iyy>
+            <iyz>0</iyz>
+            <izz>0.001</izz>
+          </inertia>
+        </inertial>
+        <collision name="L2_collision">
+          <pose>-0.0525 0 0 0 1.5708 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.025</radius>
+              <length>0.105</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <visual name="L2_visual_a">
+          <pose>-0.105 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>0.05</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.2 0.2 0.2 1</ambient> <!-- dark gray -->
+            <diffuse>0.2 0.2 0.2 1</diffuse>
+          </material>
+        </visual>
+
+        <visual name="L2_visual_b">
+          <pose>-0.0525 0 0 0 1.5708 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.015</radius>
+              <length>0.105</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient> <!-- light gray -->
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+          </material>
+        </visual>
+      </link>
+
+      <!-- JOINT J1-->
+      <joint name="J1" type="revolute">
+        <parent>L1</parent>
+        <child>L2</child>
+        <pose>-0.105 0 0 0 0 0</pose>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-2.76</lower>
+            <upper>2.76</upper>
+            <effort>14</effort>
+            <velocity>0.35</velocity>
+          </limit>
+          <dynamics>
+            <damping>0</damping>
+            <friction>0</friction>
+          </dynamics>
+        </axis>
+      </joint>    
+
+      <!-- L3 LINK -->
+      <link name="L3">
+        <pose>0 0 0.338 0 -1.5708 1.5708</pose>
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>0.1</mass>
+          <inertia>
+            <ixx>0.001</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.001</iyy>
+            <iyz>0</iyz>
+            <izz>0.001</izz>
+          </inertia>
+        </inertial>
+        <collision name="L3_collision">
+          <pose>-0.0675 0 0 0 1.5708 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.025</radius>
+              <length>0.135</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <visual name="L3_visual_a">
+          <pose>-0.135 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>0.05</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.2 0.2 0.2 1</ambient> <!-- dark gray -->
+            <diffuse>0.2 0.2 0.2 1</diffuse>
+          </material>
+        </visual>
+
+        <visual name="L3_visual_b">
+          <pose>-0.0675 0 0 0 1.5708 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.015</radius>
+              <length>0.135</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient> <!-- light gray -->
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+          </material>
+        </visual>
+      </link>
+
+
+      <!-- JOINT J2-->
+      <joint name="J2" type="revolute">
+        <parent>L2</parent>
+        <child>L3</child>
+        <pose>-0.135 0 0 0 0 0</pose>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-2.76</lower>
+            <upper>2.76</upper>
+            <effort>10</effort>
+            <velocity>0.35</velocity>
+          </limit>
+          <dynamics>
+            <damping>0</damping>
+            <friction>0</friction>
+          </dynamics>
+        </axis>
+      </joint>
+
+            <!-- LOWER_WRIST -->
+      <link name="L4">
+        <pose>0 0 0.411 0 0 3.1416</pose>
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>0.1</mass>
+          <inertia>
+            <ixx>0.001</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.001</iyy>
+            <iyz>0</iyz>
+            <izz>0.001</izz>
+          </inertia>
+        </inertial>
+        <collision name="L4_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.025</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <visual name="L4_visual_a">
+          <pose>0 0 -0.073 0 -1.5708 1.5708</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>0.05</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.2 0.2 0.2 1</ambient> <!-- dark gray -->
+            <diffuse>0.2 0.2 0.2 1</diffuse>
+          </material>
+        </visual>
+
+        <visual name="L4_visual_b">
+          <pose>0 0 -0.0365 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.015</radius>
+              <length>0.073</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient> <!-- light gray -->
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+          </material>
+        </visual>
+      </link>
+
+      <joint name="J3" type="revolute">
+        <parent>L3</parent>
+        <child>L4</child>
+        <pose>0 0 -0.073 0 0 0</pose>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>-2.67</lower>
+            <upper>2.67</upper>
+            <effort>7</effort>
+            <velocity>0.35</velocity>
+          </limit>
+          <dynamics>
+            <damping>0</damping>
+            <friction>0</friction>
+          </dynamics>
+        </axis>
+      </joint>      
+
+      <!-- END_EFFECTOR Tool Center Point-->
+      <link name="tool_center_point">
+        <pose>0 0 0.514 0 0 3.1416</pose>
+
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>0.1</mass>
+          <inertia>
+            <ixx>0.001</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.001</iyy>
+            <iyz>0</iyz>
+            <izz>0.001</izz>
+          </inertia>
+        </inertial>
+
+        <visual name="x_axis">
+          <pose>0.025 0 0 0 1.5708 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.002</radius>
+              <length>0.05</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>1 0 0 1</ambient>
+            <diffuse>1 0 0 1</diffuse>
+          </material>
+        </visual>
+        <visual name="y_axis">
+          <pose>0 0.025 0 1.5708 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.002</radius>
+              <length>0.05</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+          </material>
+        </visual>
+        <visual name="z_axis">
+          <pose>0 0 0.025 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.002</radius>
+              <length>0.05</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0 0 1 1</ambient>
+            <diffuse>0 0 1 1</diffuse>
+          </material>
+        </visual>
+
+        <visual name="L5_visual_a">
+          <pose>0 0 -0.103 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>0.025</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.2 0.2 0.2 1</ambient> <!-- dark gray -->
+            <diffuse>0.2 0.2 0.2 1</diffuse>
+          </material>
+        </visual>
+
+        <visual name="L5_visual_b">
+          <pose>0 0 -0.068 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.015</radius>
+              <length>0.05</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient> <!-- light gray -->
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+          </material>
+        </visual>
+
+        <visual name="gripper">
+          <pose>0 0 -0.025 1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <uri>gripper.obj</uri>
+            </mesh>            
+          </geometry>
+        </visual>
+      </link>
+
+    <joint name="J4" type="revolute">
+        <parent>L4</parent>
+        <child>tool_center_point</child>
+        <pose>0 0 -0.103 0 0 0</pose>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-2.67</lower>
+            <upper>2.67</upper>
+            <effort>7</effort>
+            <velocity>0.35</velocity>
+          </limit>
+          <dynamics>
+            <damping>0</damping>
+            <friction>0</friction>
+          </dynamics>
+        </axis>
+    </joint>   
+
+    <static>0</static>
+    </model>
+</sdf>
