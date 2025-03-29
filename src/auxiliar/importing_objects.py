@@ -181,8 +181,6 @@ def add_objects(plant):
     
     return objects
 
-  
-
 def add_cylinder_obstacle(plant):
     """
     Adds a shelf to the plant from an SDF file.

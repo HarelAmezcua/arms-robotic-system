@@ -1,24 +1,18 @@
 import numpy as np
 import time
+from typing import Dict
 
+from pydrake.all import Context, Meshcat, SceneGraph
+from pydrake.geometry import Rgba, Sphere
+from pydrake.geometry.optimization import HPolyhedron
 from pydrake.math import RigidTransform
-from pydrake.systems.framework import DiagramBuilder
-from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
 from pydrake.multibody.meshcat import JointSliders
+from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
+from pydrake.systems.framework import DiagramBuilder
 from pydrake.visualization import AddDefaultVisualization
 
-from pydrake.geometry.optimization import (
-    HPolyhedron)
-from pydrake.geometry import (
-    Rgba,
-    Sphere,
-)
-from pydrake.all import Context, Meshcat, SceneGraph
-
 from src.auxiliar.auxiliar_functions import LoadRobot
-from src.auxiliar.helper import GenerateRegion
-from src.manipulation import running_as_notebook
-from typing import Dict
+from src.auxiliar.gcs_helper import GenerateRegion
 
 def IrisIndicator(
     scene_graph: SceneGraph,
@@ -33,6 +27,7 @@ def IrisIndicator(
     meshcat.SetTransform("iris_indicator", RigidTransform(p_WIndicator))
 
     query_object = scene_graph.get_query_output_port().Eval(scene_graph_context)
+
     has_collisions = query_object.HasCollisions()
     if has_collisions:
         meshcat.SetObject("iris_indicator", Sphere(radius), Rgba(1, 0, 0, 1))
@@ -49,8 +44,6 @@ def IrisIndicator(
 
     if not has_collisions and not in_any_region:
         meshcat.SetObject("iris_indicator", Sphere(radius), Rgba(0.5, 0.5, 0.5, 1))
-
-
 
 
 def JointTeleop(meshcat, seeds_joint_teleop, iris_regions, config, q):
@@ -70,8 +63,7 @@ def JointTeleop(meshcat, seeds_joint_teleop, iris_regions, config, q):
     plant_context = plant.GetMyMutableContextFromRoot(context)
     scene_graph_context = scene_graph.GetMyContextFromRoot(context)
     sliders_context = sliders.GetMyContextFromRoot(context)
-
-    q
+    
     if len(q) == 0:
         q = plant.GetPositions(plant_context)
     sliders.SetPositions(q)
@@ -88,8 +80,6 @@ def JointTeleop(meshcat, seeds_joint_teleop, iris_regions, config, q):
     meshcat.AddButton(stop_button_name, "Escape")
 
     diagram.ForcedPublish(context)
-    if not running_as_notebook:
-        return
 
     while meshcat.GetButtonClicks(stop_button_name) < 1:
         # Check if the sliders have changed.

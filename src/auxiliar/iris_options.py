@@ -1,10 +1,13 @@
-from pydrake.geometry.optimization import (        
-    IrisOptions)
+from pydrake.geometry.optimization import (IrisOptions)
 import multiprocessing as mp
 
 def create_iris_options():
-    iris_options = IrisOptions()
-    iris_options.iteration_limit = 10
+    """"
+    Create the IRIS options and configuration for the IRIS algorithm."
+    """
+    # Create the IRIS options and configuration for the IRIS algorithm.
+    iris_options = IrisOptions() 
+    iris_options.iteration_limit = 10 
     iris_options.num_collision_infeasible_samples = 3
     iris_options.require_sample_point_is_contained = True
     iris_options.relative_termination_threshold = 0.01
