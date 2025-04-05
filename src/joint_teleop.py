@@ -4,15 +4,15 @@ from typing import Dict
 
 from pydrake.all import Context, Meshcat, SceneGraph
 from pydrake.geometry import Rgba, Sphere
-from pydrake.geometry.optimization import HPolyhedron
+from pydrake.geometry.optimization import HPolyhedron # type: ignore
 from pydrake.math import RigidTransform
 from pydrake.multibody.meshcat import JointSliders
 from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
 from pydrake.systems.framework import DiagramBuilder
 from pydrake.visualization import AddDefaultVisualization
 
-from src.auxiliar.auxiliar_functions import LoadRobot
-from src.auxiliar.gcs_helper import GenerateRegion
+from src.load_scene_objects import LoadRobot
+from src.gcs_helper import GenerateRegion
 
 def IrisIndicator(
     scene_graph: SceneGraph,
@@ -46,7 +46,7 @@ def IrisIndicator(
         meshcat.SetObject("iris_indicator", Sphere(radius), Rgba(0.5, 0.5, 0.5, 1))
 
 
-def JointTeleop(meshcat, seeds_joint_teleop, iris_regions, config, q):
+def JointTeleop(meshcat, seeds_joint_teleop, iris_regions, config):
     meshcat.Delete()
     meshcat.DeleteAddedControls()
     builder = DiagramBuilder()
@@ -64,8 +64,7 @@ def JointTeleop(meshcat, seeds_joint_teleop, iris_regions, config, q):
     scene_graph_context = scene_graph.GetMyContextFromRoot(context)
     sliders_context = sliders.GetMyContextFromRoot(context)
     
-    if len(q) == 0:
-        q = plant.GetPositions(plant_context)
+    q = plant.GetPositions(plant_context)
     sliders.SetPositions(q)
 
     # Implements a version of JointSliders.run() which can also watch for extra UI events.
@@ -95,7 +94,7 @@ def JointTeleop(meshcat, seeds_joint_teleop, iris_regions, config, q):
                 region_num += 1
             meshcat.AddButton("Generating region (please wait)")
             seeds_joint_teleop.append(new_positions)
-            GenerateRegion(f"{region_name}{region_num}", new_positions, config)
+            GenerateRegion(f"{region_name}{region_num}", new_positions, config, iris_regions)
             meshcat.DeleteButton("Generating region (please wait)")
         elif np.array_equal(new_positions, old_positions):
             time.sleep(1e-3)

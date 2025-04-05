@@ -1,6 +1,6 @@
 # This file uses centimeters as units for non-parametric coordinates.
 
-mtllib textured.mtl
+mtllib Ketchup.mtl
 v 1.971900 -7.273875 -0.550586
 v 3.070511 -6.798608 -0.512939
 v 3.141501 -4.300522 -0.682230

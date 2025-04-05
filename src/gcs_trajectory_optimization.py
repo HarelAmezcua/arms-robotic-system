@@ -1,20 +1,13 @@
 import time
 import numpy as np
 
-from pydrake.common.value import AbstractValue
-from pydrake.geometry import (
-    QueryObject,
-    Rgba,
-    Role,
-    MeshcatVisualizer,
-)
 from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
 from pydrake.systems.framework import DiagramBuilder
-from pydrake.geometry.optimization import GraphOfConvexSetsOptions, Point
+from pydrake.geometry.optimization import GraphOfConvexSetsOptions, Point  # type: ignore
 from pydrake.planning import GcsTrajectoryOptimization
-
-from src.auxiliar.auxiliar_functions import LoadRobot
 from pydrake.visualization import AddDefaultVisualization
+
+from src.load_scene_objects import LoadRobot
 
 
 def PublishPositionTrajectory(
@@ -87,4 +80,3 @@ def GcsTrajOpt(q_start, q_goal, iris_regions, meshcat):
         plant,
         diagram.GetSubsystemByName("meshcat_visualizer(illustration)"),
     )
-

@@ -6,20 +6,18 @@ from copy import copy
 
 from pydrake.all import Context, Meshcat, SceneGraph, MeshcatPoseSliders
 from pydrake.geometry import Rgba, Sphere
-from pydrake.geometry.optimization import HPolyhedron
-from pydrake.math import RigidTransform
+from pydrake.geometry.optimization import HPolyhedron # type: ignore
+from pydrake.math import RigidTransform, RotationMatrix
 from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
 from pydrake.systems.framework import DiagramBuilder
 from pydrake.visualization import AddDefaultVisualization
 
-from src.auxiliar.auxiliar_functions import LoadRobot
-from src.auxiliar.gcs_helper import GenerateRegion
+from src.load_scene_objects import LoadRobot
+from src.gcs_helper import GenerateRegion
 
 from pydrake.multibody.plant import MultibodyPlant
 from pydrake.multibody.inverse_kinematics import InverseKinematics
 from pydrake.solvers import Solve
-
-from pydrake.math import RigidTransform, RotationMatrix
 
 
 RpyXyz = namedtuple("RpyXyz", ("roll", "pitch", "yaw", "x", "y", "z"))
@@ -72,8 +70,8 @@ def MyInverseKinematics(X_WE, plant=None, context=None):
     ik = InverseKinematics(plant, context)
 
     # Define a larger cuboid for the position constraint
-    lower_bound = X_WE.translation() - np.array([0.05, 0.05, 0.05])
-    upper_bound = X_WE.translation() + np.array([0.05, 0.05, 0.05])
+    lower_bound = X_WE.translation() - np.array([0.02, 0.02, 0.02])
+    upper_bound = X_WE.translation() + np.array([0.02, 0.02, 0.02])
     p_BQ = np.array([0.0, 0.0, 0.0])  # Constrained point in the end-effector frame
 
     ik.AddPositionConstraint(
@@ -85,13 +83,26 @@ def MyInverseKinematics(X_WE, plant=None, context=None):
     )
 
     # Add a rotation cost instead of a strict orientation constraint
-    desired_rotation_matrix = X_WE.rotation()
+
+
+    # Retrieve the first joint angle
+    q_0 = plant.GetPositions(context)[0]
+
+    
+
+    first_rotation_matrix = RotationMatrix([[0, 0, 1], [0, -1, 0], [1, 0, 0]])
+    second_rotation_matrix = RotationMatrix.MakeXRotation(q_0)
+
+    third_rotation_matrix = first_rotation_matrix @ second_rotation_matrix
+
+
+    desired_rotation_matrix = third_rotation_matrix
     ik.AddOrientationCost(
         frameAbar=plant.world_frame(),
         R_AbarA=desired_rotation_matrix,
         frameBbar=E,
         R_BbarB=RotationMatrix.Identity(),
-        c=0.0000001
+        c=0.001
     )
 
     prog = ik.get_mutable_prog()
@@ -109,7 +120,7 @@ def MyInverseKinematics(X_WE, plant=None, context=None):
     return result.GetSolution(q)
 
 
-def EndEffectorTeleop(meshcat=None, q=None, iris_regions=None):
+def EndEffectorTeleop(meshcat=None, iris_regions=None, config=None, seeds_joint_teleop=None, iris_options=None):
     meshcat.Delete()
     meshcat.DeleteAddedControls()
 
@@ -149,9 +160,8 @@ Control the end-effector position/orientation with the sliders or the keyboard:
     plant_context = plant.GetMyMutableContextFromRoot(context)
     scene_graph_context = scene_graph.GetMyContextFromRoot(context)
     sliders_context = sliders.GetMyContextFromRoot(context)
-    
-    if len(q) == 0:
-        q = plant.GetPositions(plant_context)
+        
+    q = plant.GetPositions(plant_context)
     plant.SetPositions(plant_context, q)
     X_WE = plant.EvalBodyPoseInWorld(plant_context, ee_body)
     sliders.SetPose(X_WE)
@@ -181,8 +191,11 @@ Control the end-effector position/orientation with the sliders or the keyboard:
                 region_num += 1
             meshcat.AddButton("Generating region (please wait)")
             GenerateRegion(
-                f"{region_name}{region_num}", plant.GetPositions(plant_context)
+                f"{region_name}{region_num}", plant.GetPositions(plant_context), config, iris_regions, iris_options
             )
+
+            curren_robot_position = plant.GetPositions(plant_context)
+            seeds_joint_teleop.append(curren_robot_position)
             meshcat.DeleteButton("Generating region (please wait)")
         elif X_WE.IsExactlyEqualTo(new_X_WE):
             time.sleep(1e-3)

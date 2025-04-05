@@ -1,24 +1,24 @@
 <?xml version="1.0" ?>
 <sdf version="1.7">
-  <model name="cylinder_obstacle">
-    <link name="cylinder_body">
+  <model name="ketchup_stand">
+    <link name="body_ketchup_stand">
       <visual name="cylinder_visual">
         <geometry>
           <cylinder>
-            <radius>0.025</radius>       <!-- meters -->
-            <length>0.5</length>       <!-- meters -->
+            <radius>0.05</radius>       <!-- meters -->
+            <length>0.15</length>       <!-- meters -->
           </cylinder>
         </geometry>
         <material>
-          <ambient>0.8 0.1 0.1 1</ambient>  <!-- reddish color -->
-          <diffuse>0.8 0.1 0.1 1</diffuse>
+            <ambient>0.4 0.3 0.1 1</ambient>  <!-- dark gold color -->
+            <diffuse>0.4 0.3 0.1 1</diffuse>
         </material>
       </visual>
       <collision name="collision">
         <geometry>
           <cylinder>
-            <radius>0.025</radius>
-            <length>0.5</length>
+            <radius>0.05</radius>
+            <length>0.15</length>
           </cylinder>
         </geometry>
       </collision>      

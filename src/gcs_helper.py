@@ -1,28 +1,14 @@
 import time
-import multiprocessing as mp
 import numpy as np
-
 from IPython.display import display
 
-from pydrake.common.value import AbstractValue
-from pydrake.geometry import (
-    QueryObject, 
-    Rgba, 
-    Role,
-    MeshcatVisualizer)
-
-from pydrake.math import RigidTransform
-
-from pydrake.geometry.optimization import (
-    HPolyhedron,
-    IrisInConfigurationSpace,
-    SaveIrisRegionsYamlFile)
-
+from pydrake.geometry import QueryObject, Rgba, Role, MeshcatVisualizer
+from pydrake.geometry.optimization import HPolyhedron, IrisInConfigurationSpace, SaveIrisRegionsYamlFile # type: ignore
 from pydrake.solvers import MathematicalProgram, Solve
 from pydrake.multibody.plant import AddMultibodyPlantSceneGraph
-from pydrake.systems.framework import DiagramBuilder, LeafSystem
+from pydrake.systems.framework import DiagramBuilder
 
-from src.auxiliar.auxiliar_functions import LoadRobot
+from src.load_scene_objects import LoadRobot
 
 def ScaleHPolyhedron(hpoly, scale_factor): # Function for scaling an HPolyhedron
     # Shift to the center.
@@ -35,7 +21,6 @@ def ScaleHPolyhedron(hpoly, scale_factor): # Function for scaling an HPolyhedron
     b = b + A @ xc
     return HPolyhedron(A, b)
 
-
 def _CheckNonEmpty(region): # Function for checking if a region is non-empty
     prog = MathematicalProgram()
     x = prog.NewContinuousVariables(region.ambient_dimension())
@@ -43,19 +28,9 @@ def _CheckNonEmpty(region): # Function for checking if a region is non-empty
     result = Solve(prog)
     assert result.is_success()
 
-def _CalcRegion(name, seed, config):
+def _CalcRegion(name, seed, config, iris_regions=None, iris_options = None):
     """
     Compute a region based on the provided seed and configuration.
-
-    Args:
-        name (str): The name of the region.
-        seed (list): The seed positions for the robot configuration.
-        config (dict): A dictionary containing configuration options.
-            - iris_options
-            - use_existing_regions_as_obstacles
-            - iris_regions
-            - regions_as_obstacles_scale_factor
-
     Returns:
         Reduced region.
     """
@@ -68,79 +43,51 @@ def _CalcRegion(name, seed, config):
     plant_context = plant.GetMyContextFromRoot(diagram_context)
     plant.SetPositions(plant_context, seed)
 
-    iris_options = config["iris_options"]
-    if config["use_existing_regions_as_obstacles"]:
+    if config["use_existing_regions_as_obstacles"]:        
         iris_options.configuration_obstacles = [
             ScaleHPolyhedron(r, config["regions_as_obstacles_scale_factor"])
-            for k, r in config["iris_regions"].items()
-            if k != name
+            for k, r in iris_regions.items()
+            if k != name and r is not None
         ]
         for h in iris_options.configuration_obstacles:
             _CheckNonEmpty(h)
-    else:
-        iris_options.configuration_obstacles = []
 
-    display(f"Computing region for seed: {name}")
-    start_time = time.time()
-    hpoly = IrisInConfigurationSpace(plant, plant_context, iris_options)
-    display(
-        f"Finished seed {name}; Computation time: {(time.time() - start_time):.2f} seconds"
-    )
+    try:
+        display(f"Computing region for seed: {name}")
+        start_time = time.time()
+        hpoly = IrisInConfigurationSpace(plant, plant_context, iris_options)
+        display(
+            f"Finished seed {name}; Computation time: {(time.time() - start_time):.2f} seconds"
+        )
 
-    _CheckNonEmpty(hpoly)
-    reduced = hpoly.ReduceInequalities()
-    _CheckNonEmpty(reduced)
+        _CheckNonEmpty(hpoly)
+        reduced = hpoly.ReduceInequalities()
+        _CheckNonEmpty(reduced)
+        return reduced
 
-    return reduced
+    except Exception as e:
+        display(f"Skipping seed {name} due to error: {e}")
+        return None
 
 
-def GenerateRegion(name, seed, config):
+def GenerateRegion(name, seed, config, iris_regions=None, iris_options=None):
     """
     Generate a single region and save it to the iris_regions in config.
-
-    Args:
-        name (str): The name of the region.
-        seed (list): The seed positions for the region.
-        config (dict): Configuration dictionary containing:
-            - iris_regions: Dictionary to store the computed regions.
-            - iris_filename: Base filename for saving regions.
     """
-    config["iris_regions"][name] = _CalcRegion(name, seed, config)
-    SaveIrisRegionsYamlFile(f"{config['iris_filename']}.autosave", config["iris_regions"])
+    iris_regions[name] = _CalcRegion(name, seed, config, iris_regions, iris_options)
+    SaveIrisRegionsYamlFile(f"{config['iris_filename']}.autosave", iris_regions)
 
 
-def GenerateRegions(seed_dict, config, verbose=True):
+def GenerateRegions(seed_dict, config, iris_regions, iris_options, verbose=True):
     """
-    Generate regions for all seeds in parallel or serially based on the config.
-
-    Args:
-        seed_dict (dict): A dictionary of region names and seeds.
-        config (dict): Configuration dictionary containing:
-            - iris_regions: Dictionary to store the computed regions.
-            - iris_filename: Base filename for saving regions.
-            - use_existing_regions_as_obstacles: Whether to use existing regions as obstacles.
-            - num_parallel: Number of parallel processes to use.
-        verbose (bool): Whether to print timing information.
+    Generate regions for all seeds serially.
     """
-    if config["use_existing_regions_as_obstacles"]:
-        # Run serially
-        for k, v in seed_dict.items():
-            GenerateRegion(k, v, config)
-        return
-
     loop_time = time.time()
-    with mp.Pool(processes=config["num_parallel"]) as pool:
-        # Pass config as part of the arguments to _CalcRegion
-        new_regions = pool.starmap(
-            _CalcRegion, 
-            [[k, v, config] for k, v in seed_dict.items()]
-        )
+    for k, v in seed_dict.items():        
+        iris_regions[k] = _CalcRegion(k, v, config, iris_regions, iris_options)                
 
     if verbose:
         print("Loop time:", time.time() - loop_time)
-
-    # Update iris_regions with the results
-    config["iris_regions"].update(dict(zip(seed_dict.keys(), new_regions)))
 
 
 def DrawRobot(query_object: QueryObject, meshcat_prefix: str, draw_world: bool = True, meshcat=None):
@@ -168,12 +115,15 @@ def DrawRobot(query_object: QueryObject, meshcat_prefix: str, draw_world: bool =
             X_WF = query_object.GetPoseInWorld(frame_id)
             meshcat.SetTransform(frame_path, X_WF)
 
-def VisualizeRegion(region_name, num_to_draw=30, draw_illustration_role_once=True, meshcat=None,config=None):
+def VisualizeRegion(region_name, meshcat=None, iris_regions=None):
     """
     A simple hit-and-run-style idea for visualizing the IRIS regions:
     1. Start at the center. Pick a random direction and run to the boundary.
     2. Pick a new random direction; project it onto the current boundary, and run along it. Repeat
     """
+
+    num_to_draw=30
+    draw_illustration_role_once=True
 
     builder = DiagramBuilder()
     plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=0.0)
@@ -186,7 +136,6 @@ def VisualizeRegion(region_name, num_to_draw=30, draw_illustration_role_once=Tru
     plant_context = plant.GetMyMutableContextFromRoot(context)
     scene_graph_context = scene_graph.GetMyContextFromRoot(context)
 
-    iris_regions = config["iris_regions"]
     region = iris_regions[region_name]
 
     q = region.ChebyshevCenter()
@@ -216,34 +165,24 @@ def VisualizeRegion(region_name, num_to_draw=30, draw_illustration_role_once=Tru
         DrawRobot(query, f"{region_name}/{i}", False, meshcat)
 
 
-def VisualizeRegions(meshcat, iris_regions, config):
-    for k in iris_regions.keys():
+def VisualizeRegions(meshcat, iris_regions):
+    """
+    Visualize all IRIS regions sequentially using Meshcat.
+
+    Args:
+        meshcat: Meshcat instance for visualization.
+        iris_regions (dict): Dictionary of IRIS regions.
+        config (dict): Configuration dictionary.
+    """
+    for region_name in iris_regions.keys():
         meshcat.Delete()
-        VisualizeRegion(k, meshcat= meshcat, config = config)
-        button_name = f"Visualizing {k}; Press for next region"
+        VisualizeRegion(region_name, meshcat, iris_regions)
+        
+        button_name = f"Visualizing {region_name}; Press for next region"
         meshcat.AddButton(button_name, "Enter")
-        print("Press Enter to visualize the next region")
+        print(f"Visualizing {region_name}. Press Enter to proceed to the next region.")
+        
         while meshcat.GetButtonClicks(button_name) < 1:
             time.sleep(1.0)
+        
         meshcat.DeleteButton(button_name)
-
-
-class PoseSelector(LeafSystem):
-    def __init__(
-        self,
-        body_index=None,
-    ):
-        LeafSystem.__init__(self)
-        self._body_index = body_index
-        self.DeclareAbstractInputPort(
-            "body_poses", AbstractValue.Make([RigidTransform()])
-        )
-        self.DeclareAbstractOutputPort(
-            "pose",
-            lambda: AbstractValue.Make(RigidTransform()),
-            self.CalcOutput,
-        )
-
-    def CalcOutput(self, context, output):
-        body_poses = self.get_input_port().Eval(context)
-        output.set_value(body_poses[self._body_index])

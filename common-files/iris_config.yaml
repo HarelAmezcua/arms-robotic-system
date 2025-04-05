@@ -1,0 +1,12 @@
+iris_options:
+  iteration_limit: 20 # 10
+  num_collision_infeasible_samples: 5 # 3
+  require_sample_point_is_contained: true
+  relative_termination_threshold: 0.001 # 0.01
+  termination_threshold: -1 # -1
+  configuration_space_margin: 0.001 # 0.1
+  relative_termination_threshold: 0.005  # More precise termination
+use_existing_regions_as_obstacles: true
+regions_as_obstacles_scale_factor: 0.95
+iris_filename: "iris_file"
+num_parallel: 4
