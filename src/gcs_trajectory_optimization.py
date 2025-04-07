@@ -9,6 +9,8 @@ from pydrake.visualization import AddDefaultVisualization
 
 from src.load_scene_objects import LoadRobot
 
+import random
+
 
 def PublishPositionTrajectory(
     trajectory, root_context, plant, visualizer, time_step=1.0 / 33.0
@@ -34,6 +36,8 @@ def PublishPositionTrajectory(
 
     visualizer.StopRecording()
     visualizer.PublishRecording()
+
+    time.sleep(trajectory.end_time()-trajectory.start_time() + 4.0)
 
 
 def GcsTrajOpt(q_start, q_goal, iris_regions, meshcat):
@@ -80,3 +84,76 @@ def GcsTrajOpt(q_start, q_goal, iris_regions, meshcat):
         plant,
         diagram.GetSubsystemByName("meshcat_visualizer(illustration)"),
     )
+
+
+def demo_trajectory_optimization(iris_regions, iris_seeds,meshcat):
+    if not iris_regions:
+        print(
+            "No IRIS regions loaded. Make some IRIS regions then come back and try this again."
+        )
+        return
+    assert len(iris_regions) > 0
+
+
+    builder = DiagramBuilder()
+    plant, scene_graph = AddMultibodyPlantSceneGraph(builder, time_step=0.0)
+    LoadRobot(plant)
+    plant.Finalize()
+    AddDefaultVisualization(builder, meshcat)
+    diagram = builder.Build()
+
+    key, value = next(iter(iris_seeds.items()))
+
+    for key in iris_seeds:
+        iris_seeds[key] = np.array(iris_seeds[key])
+
+    ketchup_on_top = iris_seeds.pop("ketchup_on_top", None)
+
+    previous_seed = ketchup_on_top
+
+    in_random_seed = False
+
+    for i in range(10):
+        random_seed = random.sample(list(iris_seeds.keys()), 1)
+
+        if in_random_seed:
+            q_start = ketchup_on_top
+            q_goal = iris_seeds[random_seed[0]]
+            previous_seed = q_goal
+            in_random_seed = False
+        else:
+            q_start = previous_seed
+            q_goal = ketchup_on_top
+            in_random_seed = True
+
+        gcs = GcsTrajectoryOptimization(len(value))
+        # TODO(russt): AddRegions should take named regions.
+        regions = gcs.AddRegions(list(iris_regions.values()), order=1)
+        source = gcs.AddRegions([Point(q_start)], order=0)
+        target = gcs.AddRegions([Point(q_goal)], order=0)
+        gcs.AddEdges(source, regions)
+        gcs.AddEdges(regions, target)
+        gcs.AddTimeCost()
+        gcs.AddVelocityBounds(
+            plant.GetVelocityLowerLimits(), plant.GetVelocityUpperLimits()
+        )
+
+        options = GraphOfConvexSetsOptions()
+        options.preprocessing = True
+        options.max_rounded_paths = 5
+        start_time = time.time()
+        traj, result = gcs.SolvePath(source, target, options)
+                
+        print(f"GCS solved in {time.time() - start_time} seconds")
+        if not result.is_success():
+            print("Could not find a feasible path from q_start to q_goal")
+            return
+
+        print("time: ",traj.start_time(), traj.end_time())
+
+        PublishPositionTrajectory(
+            traj,
+            diagram.CreateDefaultContext(),
+            plant,
+            diagram.GetSubsystemByName("meshcat_visualizer(illustration)"),
+        )      
