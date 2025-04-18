@@ -107,7 +107,8 @@ def demo_trajectory_optimization(iris_regions, iris_seeds,meshcat):
     for key in iris_seeds:
         iris_seeds[key] = np.array(iris_seeds[key])
 
-    ketchup_on_top = iris_seeds.pop("ketchup_on_top", None)
+    #ketchup_on_top = iris_seeds.pop("home", None)
+    ketchup_on_top = np.array([0.0, 0.65, -1.23, -0.96, 0.0])
 
     previous_seed = ketchup_on_top
 
@@ -125,6 +126,9 @@ def demo_trajectory_optimization(iris_regions, iris_seeds,meshcat):
             q_start = previous_seed
             q_goal = ketchup_on_top
             in_random_seed = True
+
+        print(f"q_start: {q_start}")
+        print(f"q_goal: {q_goal}")
 
         gcs = GcsTrajectoryOptimization(len(value))
         # TODO(russt): AddRegions should take named regions.

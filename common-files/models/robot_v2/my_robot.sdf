@@ -28,7 +28,7 @@
           <pose>0 0 -0.049 0 0 0</pose>
           <geometry>
             <cylinder>
-              <radius>0.025</radius>
+              <radius>0.035</radius>
               <length>0.098</length>
             </cylinder>
           </geometry>
@@ -72,8 +72,8 @@
         <axis>
           <xyz>0 0 1</xyz>
           <limit>
-            <lower>-2.76</lower>
-            <upper>2.76</upper>
+            <lower>-1.5708</lower>
+            <upper>1.5708</upper>
             <effort>10</effort>
             <velocity>0.35</velocity>
           </limit>
@@ -103,7 +103,7 @@
           <pose>-0.0525 0 0 0 1.5708 0</pose>
           <geometry>
             <cylinder>
-              <radius>0.025</radius>
+              <radius>0.035</radius>
               <length>0.105</length>
             </cylinder>
           </geometry>
@@ -145,8 +145,8 @@
         <axis>
           <xyz>0 0 1</xyz>
           <limit>
-            <lower>-2.76</lower>
-            <upper>2.76</upper>
+            <lower>-1.5708</lower>
+            <upper>1.5708</upper>
             <effort>14</effort>
             <velocity>0.35</velocity>
           </limit>
@@ -176,7 +176,7 @@
           <pose>-0.0675 0 0 0 1.5708 0</pose>
           <geometry>
             <cylinder>
-              <radius>0.025</radius>
+              <radius>0.035</radius>
               <length>0.135</length>
             </cylinder>
           </geometry>
@@ -219,8 +219,8 @@
         <axis>
           <xyz>0 0 1</xyz>
           <limit>
-            <lower>-2.76</lower>
-            <upper>2.76</upper>
+            <lower>-1.5708</lower>
+            <upper>1.5708</upper>
             <effort>10</effort>
             <velocity>0.35</velocity>
           </limit>
@@ -250,7 +250,7 @@
           <pose>0 0 0 0 0 0</pose>
           <geometry>
             <cylinder>
-              <radius>0.025</radius>
+              <radius>0.035</radius>
               <length>0.1</length>
             </cylinder>
           </geometry>
@@ -291,8 +291,8 @@
         <axis>
           <xyz>0 1 0</xyz>
           <limit>
-            <lower>-2.67</lower>
-            <upper>2.67</upper>
+            <lower>-1.5708</lower>
+            <upper>1.5708</upper>
             <effort>7</effort>
             <velocity>0.35</velocity>
           </limit>
@@ -319,6 +319,15 @@
             <izz>0.001</izz>
           </inertia>
         </inertial>
+
+        <collision name="End_Effector_collision">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.08 0.08 0.1</size>
+            </box>
+          </geometry>
+        </collision>
 
         <visual name="x_axis">
           <pose>0.025 0 0 0 1.5708 0</pose>
@@ -396,6 +405,8 @@
             </mesh>            
           </geometry>
         </visual>
+
+
       </link>
 
     <joint name="J4" type="revolute">
@@ -405,8 +416,8 @@
         <axis>
           <xyz>0 0 1</xyz>
           <limit>
-            <lower>-2.67</lower>
-            <upper>2.67</upper>
+            <lower>-1.5708</lower>
+            <upper>1.5708</upper>
             <effort>7</effort>
             <velocity>0.35</velocity>
           </limit>
