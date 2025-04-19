@@ -108,8 +108,8 @@ def add_static_objects(plant):
     rotation_r = RotationMatrix.MakeZRotation(np.pi/2)
     rotation_l = RotationMatrix.MakeZRotation(-np.pi/2)
 
-    transform_l = RigidTransform(rotation_l,[0.0, 0.25, 0.2])
-    transform_r = RigidTransform(rotation_r,[0.0, -0.25, 0.2])
+    transform_l = RigidTransform(rotation_l,[0.0, 0.25, 0.15])
+    transform_r = RigidTransform(rotation_r,[0.0, -0.25, 0.15])
 
     transform_ks = RigidTransform([0.3, 0.0, 0.075])
     plant.WeldFrames(plant.world_frame(), plant.GetFrameByName("body_mini_shelf_l"), transform_l)

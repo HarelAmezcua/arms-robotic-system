@@ -7,7 +7,7 @@
         <pose>0 0.121 0 0 0 0</pose> <!-- Adjusted position -->
         <geometry>
           <box>
-            <size>0.10 0.008 0.3915</size>
+            <size>0.10 0.008 0.2915</size>
           </box>
         </geometry>
         <material>
@@ -20,7 +20,7 @@
         <pose>0 -0.121 0 0 0 0</pose> <!-- Adjusted position -->
         <geometry>
           <box>
-            <size>0.10 0.008 0.3915</size>
+            <size>0.10 0.008 0.2915</size>
           </box>
         </geometry>
         <material>
@@ -35,7 +35,7 @@
         <pose>0 0.121 0 0 0 0</pose> <!-- Adjusted position -->
         <geometry>
           <box>
-            <size>0.10 0.008 0.3915</size>
+            <size>0.10 0.008 0.2915</size>
           </box>
         </geometry>
       </collision>
@@ -43,7 +43,7 @@
         <pose>0 -0.121 0 0 0 0</pose> <!-- Adjusted position -->
         <geometry>
           <box>
-            <size>0.10 0.008 0.3915</size>
+            <size>0.10 0.008 0.2915</size>
           </box>
         </geometry>
       </collision>
@@ -52,7 +52,7 @@
     <link name="top_and_bottom">
       <!-- Shelf visuals -->      
       <visual name="bottom">
-        <pose>0 0 -0.19975 0 0 0</pose>
+        <pose>0 0 -0.14975 0 0 0</pose>
         <geometry>
           <box>
             <size>0.10 0.25 0.008</size> <!-- Adjusted size -->
@@ -65,7 +65,7 @@
         </material>
       </visual>
       <visual name="top">
-        <pose>0 0 0.19975 0 0 0</pose>
+        <pose>0 0 0.14975 0 0 0</pose>
         <geometry>
           <box>
             <size>0.10 0.25 0.008</size> <!-- Adjusted size -->
@@ -93,7 +93,7 @@
       
       <!-- Shelf collisions -->
       <collision name="bottom">
-        <pose>0 0 -0.19975 0 0 0</pose>
+        <pose>0 0 -0.14975 0 0 0</pose>
         <geometry>
           <box>
             <size>0.10 0.25 0.008</size> <!-- Adjusted size -->
@@ -101,7 +101,7 @@
         </geometry>
       </collision>
       <collision name="top">
-        <pose>0 0 0.19975 0 0 0</pose>
+        <pose>0 0 0.14975 0 0 0</pose>
         <geometry>
           <box>
             <size>0.10 0.25 0.008</size> <!-- Adjusted size -->
