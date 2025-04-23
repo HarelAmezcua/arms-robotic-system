@@ -26,16 +26,23 @@ def PublishPositionTrajectory(
 
     visualizer.StartRecording(False)
 
+    trajectory_np = np.zeros([5,1])
+
     for t in np.append(
         np.arange(trajectory.start_time(), trajectory.end_time(), time_step),
         trajectory.end_time(),
     ):
         root_context.SetTime(t)
-        plant.SetPositions(plant_context, trajectory.value(t))
+        plant.SetPositions(plant_context, trajectory.value(t))   
+        # Ensure trajectory.value(t) is a NumPy array and reshape it
+        trajectory_value_np = np.array(trajectory.value(t)).reshape(-1, 1)
+        trajectory_np = np.append(trajectory_np, trajectory_value_np,1)
+        print(trajectory.value(t))
         visualizer.ForcedPublish(visualizer_context)
 
     visualizer.StopRecording()
     visualizer.PublishRecording()
+    print("Trajectory shape: ", trajectory_np.shape)
 
     time.sleep(trajectory.end_time()-trajectory.start_time() + 4.0)
 
@@ -155,7 +162,7 @@ def demo_trajectory_optimization(iris_regions, iris_seeds,meshcat):
 
         print("time: ",traj.start_time(), traj.end_time())
 
-        PublishPositionTrajectory(
+        trajectory_i = PublishPositionTrajectory(
             traj,
             diagram.CreateDefaultContext(),
             plant,

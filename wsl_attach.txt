@@ -1,0 +1,11 @@
+%%% Windows
+usbipd list
+
+usbipd bind --busid 3-1
+
+usbipd attach --wsl --busid 3-2
+
+usbipd detach --busid <busid>
+
+%%% WSL
+lsusb  
