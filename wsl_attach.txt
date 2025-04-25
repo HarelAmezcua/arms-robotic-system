@@ -1,9 +1,9 @@
 %%% Windows
 usbipd list
 
-usbipd bind --busid 3-1
+usbipd bind --busid 4-1
 
-usbipd attach --wsl --busid 3-2
+usbipd attach --wsl --busid 4-1
 
 usbipd detach --busid <busid>
 
