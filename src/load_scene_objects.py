@@ -15,7 +15,7 @@ def LoadRobot(plant: MultibodyPlant):
 
     add_custom_robot(plant)[0]
     add_table(plant)[0]    
-    add_ketchup(plant)[0]
+    #add_ketchup(plant)[0]
     add_static_objects(plant)
     return plant.GetBodyByName("tool_center_point")
 

@@ -13,9 +13,10 @@ class Struct:
         self.q6 = 0.0
 
 class DataStreamer:
-    def __init__(self, port):
+    def __init__(self, port, verbose=False):
         self.link = txfer.SerialTransfer(port)
         self.testStruct = Struct()
+        self.verbose = verbose
 
     def open_connection(self):
         self.link.open()
@@ -61,9 +62,10 @@ class DataStreamer:
             self.testStruct.q5 = self.link.rx_obj(obj_type='f', start_pos=recSize)
             recSize += txfer.STRUCT_FORMAT_LENGTHS['f']
 
-            print('{:.4f},{:.4f},{:.4f},{:.4f},{:.4f},{:.4f},{:4f}'.format(
-                self.testStruct.z, self.testStruct.q1, self.testStruct.q2,
-                self.testStruct.q3, self.testStruct.q4, self.testStruct.q5, self.testStruct.q6))
+            if self.verbose:
+                print('{:.4f},{:.4f},{:.4f},{:.4f},{:.4f},{:.4f},{:4f}'.format(
+                    self.testStruct.z, self.testStruct.q1, self.testStruct.q2,
+                    self.testStruct.q3, self.testStruct.q4, self.testStruct.q5, self.testStruct.q6))
         elif self.link.status.value <= 0:
             self.handle_error()
 
@@ -84,4 +86,4 @@ class DataStreamer:
         self.testStruct.q3 = array[3]
         self.testStruct.q4 = array[4]
         self.testStruct.q5 = array[5]
-        self.testStruct.q6 = array[6]     
+        self.testStruct.q6 = array[6]
